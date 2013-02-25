@@ -13,6 +13,7 @@ def create(
     _zlib=None,
     _base64=None,
     _urllib=None,
+    _authnref=None,
     **kwargs
     ):
     """Create a URL string which can be used to redirect a samlp:AuthnRequest to the identity provider.
@@ -34,6 +35,8 @@ def create(
         _base64 = base64
     if _urllib is None:
         _urllib = urllib
+    if _authnref is None:
+        _authnref = 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
 
     assertion_consumer_service_url = kwargs.pop(
         'assertion_consumer_service_url',
@@ -85,9 +88,7 @@ def create(
     authn_request.append(request_authn_context)
 
     authn_context_class_ref = saml_maker.AuthnContextClassRef()
-    authn_context_class_ref.text = ('urn:oasis:names:tc:SAML:2.0:ac:classes:'
-                                    + 'PasswordProtectedTransport'
-                                    )
+    authn_context_class_ref.text = (_authnref)
     request_authn_context.append(authn_context_class_ref)
 
     compressed_request = _zlib.compress(etree.tostring(authn_request))
